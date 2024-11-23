@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shap-her </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            max-width: 350px;
+            width: 100%;
+        }
+        .crypto-box {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        #darkModeToggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        .dark-mode .container {
+            background-color: #444;
+            color: white;
+        }
+        
+        #description {
+            margin-top: 20px;
+            font-style: italic;
+            text-align: justify;
+        }
+        #playlist {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #outputBox {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            min-height: 50px;
+            text-align: left;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle">🌙</button>
+    <div class="container">
+        <h1>Shap-her</h1>
+        <div class="crypto-box">
+            <textarea id="input" placeholder="Enter text to encrypt/decrypt"></textarea>
+            <div>
+                <button id="encryptBtn">Encrypt</button>
+                <button id="decryptBtn">Decrypt</button>
+                <button id="voiceBtn">🎤 Voice Command</button>
+            </div>
+        </div>
+         <div id="outputBox">
+            <strong>Output:</strong>
+            <div id="output"></div>
+        </div>
+        <div id="description">
+        &nbsp; &nbsp;   Shap-her is a secure alphabet conversion system that combines a unique set of abstract shapes. Each letter
+            in the alphabet is assigned both a shape, creating encoding system. This dual representation adds
+            complexity and reduces the risk of decryption by unauthorized users. This symbols from different
+            categories makes the cipher challenging to break, as it requires knowledge of both layers of encoding.
+        </div>
+         
+    </div>
+
+    <script>
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const voiceBtn = document.getElementById('voiceBtn');
+        
+
+        const shapeMap = {
+            'A': '▲', 'B': '●', 'C': '■', 'D': '◇', 'E': '★',
+            'F': '▽', 'G': '▷', 'H': '▪', 'I': 'X', 'J': '◆',
+            'K': '↑', 'L': '↪', 'M': '≡', 'N': '≣', 'O': '○',
+            'P': '□', 'Q': '◇', 'R': '⊐', 'S': '⚡', 'T': '⊓',
+            'U': '◎', 'V': '☾', 'W': '⊠', 'X': '✖', 'Y': '☈',
+            'Z': '⚙'
+        };
+
+        const reverseShapeMap = Object.fromEntries(
+            Object.entries(shapeMap).map(([key, value]) => [value, key])
+        );
+
+        let isDarkMode = false;
+        
+
+        function encrypt(text) {
+            return text.toUpperCase().split('').map(char => {
+                return shapeMap[char] || char;
+            }).join('');
+        }
+
+        function decrypt(text) {
+            return text.split('').map(char => {
+                return reverseShapeMap[char] || char;
+            }).join('');
+        }
+
+        encryptBtn.addEventListener('click', () => {
+            output.textContent = encrypt(input.value);
+        });
+
+        decryptBtn.addEventListener('click', () => {
+            output.textContent = decrypt(input.value);
+        });
+
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+        });
+        
+        voiceBtn.addEventListener('click', async () => {
+  if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)(); 1 
+    recognition.lang = 'en-US'; // Specify language (optional)
+
+    try {
+      await recognition.start();
+      console.log('Speech recognition started');
+    } catch (error) {
+      console.error('Error starting speech recognition:', error);
+      // Inform the user about the error (e.g., display an error message)
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      input.value = transcript;
+    };
+  } else {
+    console.error('Speech recognition not supported by your browser');
+  }
+});
+        
+
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.key === 'e') {
+                encryptBtn.click();
+            } else if (event.ctrlKey && event.key === 'd') {
+                decryptBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
